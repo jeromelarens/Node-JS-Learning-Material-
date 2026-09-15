@@ -1,572 +1,461 @@
-# 🚀 Day 1 — Node.js Runtime & Event Loop
+# 🚀 Day 0 — Getting Started
 
-> Part of the **20 Days • 20 Concepts — Node.js & Express.js** learning series
+> **20 Days • 20 Concepts — Node.js & Express.js Learning Series**
 
-Understanding the Node.js runtime and Event Loop is one of the most important foundations for becoming a good backend developer. Before building APIs, authentication systems, payment integrations, or WebSocket servers, you need to understand *how Node.js actually executes your JavaScript code*.
+Welcome to my **20 Days, 20 Concepts — Node.js & Express.js** learning journey.
 
----
+This repository is created to document my progress while learning and strengthening **Node.js and Express.js backend development**, one concept at a time.
 
-## 📌 Table of Contents
+The goal is simple:
 
-- [What You Will Learn](#-what-you-will-learn)
-- [1. What is Node.js?](#1-what-is-nodejs)
-- [2. Node.js Is Not a Programming Language](#2-nodejs-is-not-a-programming-language)
-- [3. The V8 Engine](#3-the-v8-engine)
-- [4. Event-Driven, Non-Blocking I/O](#4-event-driven-non-blocking-io)
-- [5. Blocking vs Non-Blocking Code](#5-blocking-vs-non-blocking-code)
-- [6. The Call Stack](#6-the-call-stack)
-- [7. Synchronous vs Asynchronous Execution](#7-synchronous-vs-asynchronous-execution)
-- [8. The Event Loop](#8-the-event-loop)
-- [9. libuv](#9-libuv)
-- [10. Event Loop Phases](#10-event-loop-phases)
-- [11. setTimeout vs setImmediate](#11-settimeout-vs-setimmediate)
-- [12. Microtasks](#12-microtasks)
-- [13. Is Node.js Really Single-Threaded?](#13-is-nodejs-really-single-threaded)
-- [14. CPU-Bound vs I/O-Bound Work](#14-cpu-bound-vs-io-bound-work)
-- [15. Practical Example](#15-practical-example)
-- [16. Common Misconceptions](#16-common-misconceptions)
-- [17. Key Takeaways](#17-key-takeaways)
-- [Interview Questions](#-interview-questions)
-- [Practice Tasks](#️-practice-tasks)
+> **Don't just learn syntax. Understand how backend systems actually work.**
 
 ---
 
-## 📌 What You Will Learn
+## 🎯 Why This Series?
 
-By the end of this concept, you should understand:
+Learning Node.js only by watching tutorials or memorizing syntax is not enough.
 
-- [ ] What Node.js actually is
-- [ ] How Node.js executes JavaScript
-- [ ] What the V8 engine does
-- [ ] What the Call Stack is
-- [ ] What asynchronous operations are
-- [ ] What libuv does
-- [ ] What the Event Loop does
-- [ ] How Node.js handles non-blocking I/O
-- [ ] Why Node.js can handle many concurrent requests
-- [ ] The difference between sync and async execution
-- [ ] Common misconceptions about Node.js being "single-threaded"
+A strong backend developer should understand:
 
----
+* How Node.js works internally
+* How asynchronous operations work
+* How APIs are designed
+* How middleware works
+* How authentication is implemented
+* How databases communicate with applications
+* How backend applications are secured
+* How production-ready applications are structured
 
-## 1. What is Node.js?
-
-**Node.js** is a JavaScript runtime environment that allows JavaScript to run **outside the browser**.
-
-```
-Browser              Node.js
-  │                    │
-  ▼                    ▼
-JavaScript          JavaScript
-  │                    │
-  ▼                    ▼
-V8 Engine           V8 Engine
-                       │
-                       ▼
-              Server-side Applications
-```
-
-With Node.js, you can build:
-
-- REST APIs
-- Web servers
-- Authentication systems
-- Real-time applications
-- CLI tools
-- Microservices
-- Streaming applications
-- Backend services
+So, instead of trying to learn everything at once, I'm breaking the learning journey into **20 focused concepts**.
 
 ---
 
-## 2. Node.js Is Not a Programming Language
+# 📚 20 Days — 20 Concepts
 
-A common beginner mistake is confusing Node.js with a language.
-
-| Term | What it actually is |
-|------|----------------------|
-| **JavaScript** | The programming language |
-| **Node.js** | The runtime environment that runs JS outside the browser |
-| **V8** | The engine that executes the JavaScript |
-
-```
-JavaScript → Node.js Runtime → V8 Engine → Machine Execution
-```
-
----
-
-## 3. The V8 Engine
-
-Node.js uses Google's **V8** engine to execute JavaScript.
-
-V8 handles:
-
-- Parsing JavaScript
-- Compiling JavaScript
-- Executing JavaScript
-- Memory management & garbage collection
-
-But V8 alone can't build a backend server — it doesn't know about `fs.readFile()` or `http.createServer()`. **Node.js provides those APIs around V8.**
+| Day        | Concept                                  |
+| ---------- | ---------------------------------------- |
+| **Day 0**  | Getting Started & Learning Roadmap       |
+| **Day 1**  | Node.js Runtime & Event Loop             |
+| **Day 2**  | Node.js Modules — CommonJS vs ES Modules |
+| **Day 3**  | File System & File Handling              |
+| **Day 4**  | EventEmitter                             |
+| **Day 5**  | Streams & Buffers                        |
+| **Day 6**  | Callbacks, Promises & Async/Await        |
+| **Day 7**  | NPM & Package Management                 |
+| **Day 8**  | Environment Variables & Configuration    |
+| **Day 9**  | Creating HTTP Servers with Node.js       |
+| **Day 10** | Express.js Fundamentals                  |
+| **Day 11** | Routing & Route Parameters               |
+| **Day 12** | Middleware                               |
+| **Day 13** | Request & Response Handling              |
+| **Day 14** | REST API Design                          |
+| **Day 15** | Error Handling                           |
+| **Day 16** | JWT Authentication                       |
+| **Day 17** | Input Validation                         |
+| **Day 18** | Backend Security                         |
+| **Day 19** | Database Integration & Prisma            |
+| **Day 20** | Production-Ready Express.js Architecture |
 
 ---
 
-## 4. Event-Driven, Non-Blocking I/O
+# 🛠️ Prerequisites
 
-The defining trait of Node.js is its **event-driven, non-blocking I/O model**.
+Before starting this series, you should have basic knowledge of:
 
-A blocking system waits for one operation before starting the next. Node.js starts an I/O operation and keeps working instead of waiting idly:
+### JavaScript
 
+```text
+Variables
+Functions
+Arrays
+Objects
+Loops
+ES6+
+Destructuring
+Modules
+Promises
+Async/Await
 ```
-Request → Start I/O → Continue other work → I/O completes
-        → Callback / Promise ready → JS handles the result
-```
 
-This is a big part of why Node.js excels at I/O-heavy applications.
+You don't need to be an advanced JavaScript developer.
+
+But you should be comfortable writing basic JavaScript.
 
 ---
 
-## 5. Blocking vs Non-Blocking Code
+# ⚙️ Tools Required
 
-**Synchronous (blocking) read:**
+Install the following tools:
 
-```js
-const fs = require("fs");
+### 1. Node.js
 
-const data = fs.readFileSync("data.txt", "utf8");
-console.log(data);
-console.log("Done");
-```
-
-Execution waits for the file read to finish before continuing.
-
-**Asynchronous (non-blocking) read:**
-
-```js
-const fs = require("fs");
-
-fs.readFile("data.txt", "utf8", (err, data) => {
-  if (err) return console.error(err);
-  console.log(data);
-});
-
-console.log("Done");
-```
-
-Output:
-
-```
-Done
-<file contents>
-```
-
-Node.js starts the file operation and doesn't block JS execution while waiting.
-
----
-
-## 6. The Call Stack
-
-The **Call Stack** tracks which functions are currently executing.
-
-```js
-function first() {
-  second();
-}
-function second() {
-  console.log("Hello");
-}
-first();
-```
-
-```
-┌─────────────┐
-│  second()   │
-├─────────────┤
-│  first()    │
-├─────────────┤
-│   global    │
-└─────────────┘
-```
-
-Rule: **Push → Execute → Pop.** The most recently added function runs first, then is removed once it finishes.
-
----
-
-## 7. Synchronous vs Asynchronous Execution
-
-**Synchronous** — runs top to bottom, each line waits for the previous:
-
-```js
-console.log("A");
-console.log("B");
-console.log("C");
-// A, B, C
-```
-
-**Asynchronous** — some operations are started without blocking the rest of the code:
-
-```js
-console.log("Start");
-
-setTimeout(() => {
-  console.log("Timer finished");
-}, 2000);
-
-console.log("End");
-// Start, End, Timer finished
-```
-
----
-
-## 8. The Event Loop
-
-The **Event Loop** coordinates when callbacks and other scheduled JS work get executed.
-
-```
-Call Stack → JS executes → Async operation
-   → Node/OS/libuv handles I/O → Operation completes
-   → Callback ready → Event Loop → Call Stack
-```
-
-> The Event Loop lets Node.js coordinate async work **without blocking** the main JavaScript execution path.
-
----
-
-## 9. libuv
-
-**libuv** is the library providing the infrastructure behind Node's async I/O model:
-
-- Event loop
-- Async I/O
-- Networking
-- File-system operations
-- Timers
-- Thread pool
-
-```
-            Node.js
-               │
-     ┌─────────┴─────────┐
-     │                   │
-    V8                 libuv
-     │                   │
-JS Execution        Async I/O / Event Loop
-                          │
-                     Thread Pool
-```
-
-Mental model: **Node.js = V8 + libuv + Node APIs + other runtime components** — not just V8.
-
----
-
-## 10. Event Loop Phases
-
-```
-Timers → Pending Callbacks → Poll → Check → Close Callbacks → (next iteration)
-```
-
-| Phase | Handles |
-|-------|---------|
-| **Timers** | `setTimeout()`, `setInterval()` callbacks |
-| **Pending Callbacks** | Certain deferred callbacks from previous operations |
-| **Poll** | I/O-related callbacks; decides whether to wait for more I/O |
-| **Check** | `setImmediate()` callbacks |
-| **Close Callbacks** | Close-related events (e.g. `socket.on("close", ...)`) |
-
-> A timer sets a **minimum** delay before it's eligible to run — not a guaranteed exact time.
-
----
-
-## 11. setTimeout vs setImmediate
-
-```js
-setTimeout(() => console.log("timeout"), 0);
-setImmediate(() => console.log("immediate"));
-```
-
-From the main module, the order between these two is **not guaranteed**.
-
-But inside an I/O callback, `setImmediate()` is designed to run **before** a timer scheduled in that same callback:
-
-```js
-const fs = require("fs");
-
-fs.readFile(__filename, () => {
-  setTimeout(() => console.log("timeout"), 0);
-  setImmediate(() => console.log("immediate"));
-});
-
-// Typically:
-// immediate
-// timeout
-```
-
-**Lesson:** don't memorize one universal output — understand the *context* in which callbacks are scheduled.
-
----
-
-## 12. Microtasks
-
-Node.js processes microtasks such as `Promise.then()` and `queueMicrotask()`. There's also `process.nextTick()`, which uses its own queue with special priority.
-
-```js
-console.log("Start");
-
-Promise.resolve().then(() => console.log("Promise"));
-
-console.log("End");
-
-// Start
-// End
-// Promise
-```
-
-### Full example
-
-```js
-console.log("1");
-
-setTimeout(() => console.log("2"), 0);
-
-Promise.resolve().then(() => console.log("3"));
-
-console.log("4");
-
-// 1
-// 4
-// 3
-// 2
-```
-
-**Why:** synchronous code (`1`, `4`) runs first, then microtasks (`3`), then timers (`2`).
-
----
-
-## 13. Is Node.js Really Single-Threaded?
-
-**Partially true, often misunderstood.**
-
-- JavaScript execution runs on **one main thread**.
-- But Node.js as a whole isn't limited to one thread — it uses **libuv's thread pool** for certain operations, plus **Worker Threads** for CPU-intensive JS.
-
-```
-             Node.js Process
-                    │
-             Main JS Thread
-                    │
-             ┌──────┴──────┐
-             │   libuv     │
-             │ Thread Pool │
-             └──────┬──────┘
-        ┌───────────┼───────────┐
-        ▼           ▼           ▼
-      Worker      Worker      Worker
-```
-
-> Node.js uses a single main JS execution thread by default, but the overall runtime can use multiple threads and OS facilities.
-
----
-
-## 14. CPU-Bound vs I/O-Bound Work
-
-| I/O-Bound | CPU-Bound |
-|-----------|-----------|
-| Database queries | Heavy math calculations |
-| HTTP requests | Image processing |
-| File operations | Large data transformations |
-| Network communication | Encryption/compression |
-
-Node.js handles I/O-bound work efficiently since it avoids blocking the main thread while waiting.
-
-CPU-heavy code on the main thread, however, **blocks the event loop**:
-
-```
-CPU-heavy task → Main thread blocked
-              → Event loop can't process other callbacks
-              → Requests get delayed
-```
-
-**Solutions:** Worker Threads, separate services, job queues, background workers, process-based scaling.
-
----
-
-## 15. Practical Example
-
-```js
-// server.js
-const http = require("http");
-
-const server = http.createServer((req, res) => {
-  console.log("Request received");
-
-  setTimeout(() => {
-    res.end("Response from Node.js");
-  }, 2000);
-});
-
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
-```
+Check installation:
 
 ```bash
-node server.js
-# then open http://localhost:3000
+node -v
 ```
 
-While a request waits on the timer, Node.js isn't frozen for those two seconds — the event loop keeps handling other eligible work.
+Example:
+
+```text
+v22.x.x
+```
+
+### 2. NPM
+
+Check installation:
+
+```bash
+npm -v
+```
+
+### 3. Git
+
+Check installation:
+
+```bash
+git --version
+```
+
+### 4. VS Code
+
+Recommended editor for following the examples.
 
 ---
 
-## 16. Common Misconceptions
+# 📥 Clone This Repository
 
-| ❌ Misconception | ✅ Reality |
-|------------------|-----------|
-| "Node.js executes everything asynchronously." | Normal JS execution is synchronous by default. |
-| "Node.js has no threads." | It has a main JS thread, plus libuv's thread pool and Worker Threads. |
-| "`setTimeout(fn, 0)` runs immediately." | It becomes *eligible* after the delay, subject to event-loop scheduling. |
-| "The Event Loop makes CPU-heavy code async." | CPU-bound work on the main thread still blocks the loop. |
-| "Node.js is always faster than other backends." | Performance depends on workload, architecture, DB, network, and more. |
+Clone the repository:
 
----
-
-## 17. Key Takeaways
-
-**Node.js**
-- JavaScript runtime environment
-- Runs JS outside the browser
-- Uses V8 to execute JavaScript
-- Provides server-side APIs
-- Event-driven architecture
-
-**Event Loop**
-- Coordinates async callback execution
-- Enables non-blocking I/O
-- Works with libuv and Node.js internals
-- Does **not** make CPU-heavy JS non-blocking
-
-**Mental model**
-
+```bash
+git clone https://github.com/jeromelarens/Node-JS-Learning-Material-.git
 ```
-JS Code → Call Stack → Node APIs / libuv / OS
-        → Async Operation → Callback/Promise ready
-        → Event Loop → Call Stack → JS executes
+
+Move into the project:
+
+```bash
+cd Node-JS-Learning-Material-
 ```
 
 ---
 
-## 🧠 Interview Questions
+# 🌿 Learning Branches
 
-<details>
-<summary><strong>Beginner</strong></summary>
+Each learning stage can be maintained separately using branches.
 
-1. **What is Node.js?**
-   A JavaScript runtime environment that allows JS to run outside the browser.
-2. **What engine does Node.js use?**
-   Google's V8 JavaScript engine.
-3. **What is the Event Loop?**
-   The core mechanism that coordinates when eligible callbacks and other JS work are executed.
-4. **Is Node.js single-threaded?**
-   JS execution runs on a main thread by default, but Node.js can use other threads/OS facilities for certain operations.
+For example:
 
-</details>
+```text
+main
+ │
+ ├── Day-1
+ ├── Day-2
+ ├── Day-3
+ ├── Day-4
+ └── ...
+```
 
-<details>
-<summary><strong>Intermediate</strong></summary>
+To switch to a specific day:
 
-5. **What is non-blocking I/O?**
-   An I/O operation can be started without forcing the main JS thread to wait synchronously for it to finish.
-6. **What is libuv?**
-   The library providing the event loop and async I/O infrastructure, including a thread pool.
-7. **What happens when the Event Loop is blocked?**
-   Other JS callbacks can't run normally — this increases latency and delays requests.
-8. **Difference between `setTimeout()` and `setImmediate()`?**
-   They use different event-loop mechanisms; inside an I/O callback, `setImmediate()` generally runs before a timer scheduled at the same time.
+```bash
+git checkout Day-1
+```
 
-</details>
+Then open the project:
 
-<details>
-<summary><strong>Advanced</strong></summary>
-
-9. **Why is Node.js suitable for I/O-heavy apps?**
-   Its event-driven, non-blocking model avoids synchronously waiting for I/O.
-10. **Why can CPU-intensive code be problematic?**
-    It can block the main thread and prevent the event loop from processing other work.
-11. **How can CPU-heavy tasks be handled?**
-    Worker Threads, background workers, job queues, separate processes, or dedicated services.
-12. **Relationship between V8 and libuv?**
-    V8 executes JavaScript; libuv provides the async I/O and event-loop infrastructure Node.js relies on.
-
-</details>
+```bash
+code .
+```
 
 ---
 
-## 🛠️ Practice Tasks
+# 🧠 How To Use This Repository
 
-Try these yourself before moving to Day 2.
+Don't just read the README files.
 
-### Task 1 — Execution Order
+For every concept:
 
-Predict the output, then run it to verify:
+### 1️⃣ Read
 
-```js
-console.log("A");
+Understand the theory first.
 
-setTimeout(() => console.log("B"), 0);
+### 2️⃣ Predict
 
-Promise.resolve().then(() => console.log("C"));
+Before running an example, try to predict:
 
-console.log("D");
+```text
+What will happen?
+What will be the output?
+Why?
 ```
 
-### Task 2 — Timer Experiment
+### 3️⃣ Run
 
-```js
-setTimeout(() => console.log("Timer 1"), 1000);
-setTimeout(() => console.log("Timer 2"), 0);
-setTimeout(() => console.log("Timer 3"), 500);
+Execute the code yourself.
+
+```bash
+node filename.js
 ```
 
-Observe and explain the execution order.
+### 4️⃣ Experiment
 
-### Task 3 — Blocking Experiment
+Change the code.
 
-Write a CPU-intensive `while` loop and observe what happens to other timers or requests while it runs. Then research how **Worker Threads** solve this problem.
+Break it.
+
+Fix it.
+
+Try different inputs.
+
+### 5️⃣ Explain
+
+Try explaining the concept without looking at the notes.
+
+If you can't explain it simply, you probably haven't understood it yet.
 
 ---
 
-## 📚 Mental Model to Remember
+# 🔬 Learning Method
 
-Don't just memorize the Event Loop diagram — think of it as a flow:
+Each day follows approximately this structure:
 
+```text
+Concept
+   ↓
+Why it exists
+   ↓
+How it works
+   ↓
+Code Example
+   ↓
+Execution Flow
+   ↓
+Real-World Use Case
+   ↓
+Common Mistakes
+   ↓
+Practice
+   ↓
+Interview Questions
 ```
+
+The focus is on **understanding**, not memorization.
+
+---
+
+# 🎯 What I Want To Build Through This Journey
+
+By the end of these 20 days, I want to be comfortable working with:
+
+```text
+Node.js
+   ↓
+Express.js
+   ↓
+REST APIs
+   ↓
+Authentication
+   ↓
+Validation
+   ↓
+Security
+   ↓
+Database
+   ↓
+Prisma
+   ↓
+Production Architecture
+```
+
+The final goal isn't to simply say:
+
+> "I know Node.js."
+
+The goal is to be able to **design, build, debug and explain backend applications using Node.js and Express.js.**
+
+---
+
+# 📌 Learning Rules
+
+### Rule 1 — Don't Copy-Paste Blindly
+
+Understand every line before using it.
+
+### Rule 2 — Run The Code
+
+Reading code is not the same as executing it.
+
+### Rule 3 — Break Things
+
+Errors are part of the learning process.
+
+### Rule 4 — Ask "Why?"
+
+Don't stop at:
+
+```text
+How?
+```
+
+Ask:
+
+```text
+Why does this work?
+Why is it designed this way?
+What happens internally?
+What happens if it fails?
+```
+
+### Rule 5 — Build Along The Way
+
+Every concept should eventually connect to a real backend use case.
+
+---
+
+# 📊 Progress Tracker
+
+```text
+Day 0  ⬜ Getting Started
+Day 1  ⬜ Node.js Runtime & Event Loop
+Day 2  ⬜ Modules
+Day 3  ⬜ File System
+Day 4  ⬜ EventEmitter
+Day 5  ⬜ Streams & Buffers
+Day 6  ⬜ Async Programming
+Day 7  ⬜ NPM
+Day 8  ⬜ Environment & Configuration
+Day 9  ⬜ HTTP Server
+Day 10 ⬜ Express.js
+Day 11 ⬜ Routing
+Day 12 ⬜ Middleware
+Day 13 ⬜ Request & Response
+Day 14 ⬜ REST APIs
+Day 15 ⬜ Error Handling
+Day 16 ⬜ JWT Authentication
+Day 17 ⬜ Validation
+Day 18 ⬜ Security
+Day 19 ⬜ Database & Prisma
+Day 20 ⬜ Production Architecture
+```
+
+---
+
+# 💡 The Bigger Picture
+
+These 20 concepts are not isolated topics.
+
+They connect together.
+
+```text
 JavaScript
-    │
-    ▼
-Call Stack
-    │
- ┌──┴───────────┐
- ▼              ▼
-Sync Work    Async Work
-                 │
-                 ▼
-        Node.js / libuv / OS
-                 │
-                 ▼
-         Operation Complete
-                 │
-                 ▼
-      Callback / Microtask
-                 │
-                 ▼
-            Event Loop
-                 │
-                 ▼
-             Call Stack
+    ↓
+Node.js Runtime
+    ↓
+Modules
+    ↓
+Async Programming
+    ↓
+HTTP
+    ↓
+Express.js
+    ↓
+Routing
+    ↓
+Middleware
+    ↓
+REST APIs
+    ↓
+Authentication
+    ↓
+Validation
+    ↓
+Security
+    ↓
+Database
+    ↓
+Prisma
+    ↓
+Production Architecture
 ```
+
+Understanding this progression is more valuable than memorizing individual commands.
 
 ---
 
-### ✅ Next up: Day 2
+# 🚀 Start Here
 
-Continue the series to see how these concepts power **Express.js** routing, middleware, and real backend applications.
+If you're starting the series from the beginning:
 
+### 👉 Start with Day 1
+
+**Node.js Runtime & Event Loop**
+
+You'll learn:
+
+* What Node.js actually is
+* V8 Engine
+* Call Stack
+* Asynchronous execution
+* Non-blocking I/O
+* Event Loop
+* libuv
+* Event Loop phases
+* Microtasks
+* CPU vs I/O-bound work
+* Practical examples
+* Practice tasks
+* Interview questions
+
+---
+
+# 🤝 Learn Along With Me
+
+This repository is being built publicly as part of my backend development journey.
+
+If you're also learning Node.js or preparing for backend development, feel free to:
+
+⭐ Star the repository
+🍴 Fork it
+📖 Follow the concepts
+💻 Run the examples
+🧠 Try the practice tasks
+💬 Share your learning
+
+---
+
+# 📈 The Goal
+
+```text
+20 Days
+   +
+20 Concepts
+   +
+Practical Coding
+   +
+Consistent Learning
+   =
+Stronger Backend Fundamentals
+```
+
+> **Learn → Build → Understand → Share → Grow**
+
+---
+
+## 👨‍💻 Author
+
+**Jerome Larens**
+
+Backend Developer | JavaScript | Node.js | Express.js
+
+---
+
+## 📌 Series
+
+**20 Days • 20 Concepts**
+
+**Node.js & Express.js**
+
+> One concept at a time.
+> One practical example at a time.
+> One step closer to becoming a better backend developer.
