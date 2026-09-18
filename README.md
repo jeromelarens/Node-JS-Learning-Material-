@@ -890,6 +890,32 @@ app.js
 - [ ] **Task 7 — Event Arguments:** Emit `payment.completed` with `{ paymentId, amount, currency }`.
 - [ ] **Task 8 — Notification System:** Build `notification.email`, `notification.sms`, `notification.push` with separate listeners.
 
+- [ ] **Task 9 — Mini Project: Library Book Tracker 📚** Put everything from Day 4 together in one small app.
+
+  **Build:**
+  ```text
+  library-tracker/
+  │
+  ├── app.js
+  ├── events/
+  │   └── book.events.js
+  └── listeners/
+      ├── log.listener.js
+      └── fine.listener.js
+  ```
+
+  **Requirements:**
+  - Create a `bookEvents` EventEmitter in `book.events.js`.
+  - Emit `book.borrowed` with `{ bookId, userId, dueDate }` when a book is borrowed.
+  - Register **two** listeners on `book.borrowed`:
+    - `log.listener.js` → prints `"📖 Book <bookId> borrowed by user <userId>"`
+    - `fine.listener.js` → prints `"⏰ Due back by <dueDate>"`
+  - Emit `book.returned` **only once per session** using `once()` — print `"✅ Book returned. Thank you!"`
+  - Add an `'error'` listener that logs `"🚨 Library error: <message>"`, then manually `emit("error", new Error("Book not found"))` to test it.
+  - Use `emitter.listenerCount("book.borrowed")` to print how many listeners are attached, before removing one with `off()` and printing the count again.
+
+  **Goal:** by the end, you should be able to explain out loud — without looking at the README — how `emit()`, multiple listeners, `once()`, `off()`, and `error` events all fit together in one real flow. 💪
+
 ---
 
 ## 36. 🔥 Day 4 Challenge — Build an Order Event System
@@ -1031,7 +1057,7 @@ First understand **in-process events**. Then move toward: `Queues` · `Pub/Sub` 
 - [ ] Check listener count & max listeners
 - [ ] Build custom EventEmitter classes
 - [ ] Understand EventEmitter vs Event Loop / Promise / Message Queue
-- [ ] Complete practice tasks
+- [ ] Complete practice tasks (including the Library Book Tracker mini project)
 - [ ] Complete Order Event System challenge
 - [ ] Answer interview questions
 
